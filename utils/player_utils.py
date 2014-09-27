@@ -12,7 +12,7 @@ def get_player_from_email(email):
   logging.info("player = " + str(player)) 
   if not player:
     logging.info("Failed to find player by id, creating new user")
-    player = Player(parent=get_parent_key_from_email(email), id=email)
+    player = # TODO: Create a new player with the id = email and parent of get_parent_key_from_email
     player.put()
   return player
 

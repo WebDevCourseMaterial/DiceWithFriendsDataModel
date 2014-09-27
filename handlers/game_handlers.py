@@ -71,8 +71,6 @@ class NewGameAction(base_handlers.BaseAction):
     else:
       invited_player_key = None
 
-    new_game = models.Game(parent=player.key,
-                           creator_key=player.key,
-                           invitee_key=invited_player_key)
+    new_game = # TODO: Add a new game
     new_game.put();
     self.redirect("/play?game_key=" + new_game.key.urlsafe())
