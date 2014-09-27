@@ -7,15 +7,12 @@ GAME_SCORE_TO_WIN = 10000
 
 def get_all_games_for_player_query(player):
   ''' Returns a query object for all games the player is in. '''
-  return Game.query(ndb.OR(Game.creator_key == player.key,
-                           Game.invitee_key == player.key))
+  # TODO: Implement
 
 
 def get_unfinished_games_query(player):
   ''' Returns a query object for all unfinished games the player is in. '''
-  return Game.query(ndb.AND(Game.is_complete == False),
-                           ndb.OR(Game.creator_key == player.key,
-                                  Game.invitee_key == player.key))
+  # TODO: Implement
 
 
 def get_games_in_progress(player):
@@ -39,12 +36,14 @@ def is_game_finished_by_player(game, player):
     return sum(game.creator_scores) >= GAME_SCORE_TO_WIN
   return sum(game.invitee_scores) >= GAME_SCORE_TO_WIN
 
+
 def is_game_complete(game):
   """ Updates the is_complete property for the game. """
   game_round = min(len(game.creator_scores), len(game.invitee_scores))
   creator_score = sum(game.creator_scores[:game_round])
   invitee_score = sum(game.invitee_scores[:game_round])
   return creator_score >= GAME_SCORE_TO_WIN or invitee_score >= GAME_SCORE_TO_WIN
+
 
 def add_incomplete_game_table_data(incomplete_games, current_player):
   ''' Adds data to the games, based on what Jinja2 would like to display.
