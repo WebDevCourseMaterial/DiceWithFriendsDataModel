@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>Dice with Friends</title>
+<meta name="google-site-verification" content="YSn3OPDapNbOyC4nDcn9W4lFlWsyW2CH2QEK3G-FyUw" />
+<link rel="stylesheet" type="text/css" href="/static/stylesheets/bootstrap.min.css">
+<link rel="stylesheet" type="text/css" href="/static/stylesheets/bootstrap-theme.min.css">
+<script src="/static/js/jquery.min.js"></script>
+<!-- <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script> -->
+<script src="/static/js/bootstrap.min.js"></script>
+</head>
+<body>
+  <header class="navbar navbar-inverse navbar-fixed-top bs-docs-nav" role="banner">
+    <div class="container">
+      <div class="navbar-header">
+        <button class="navbar-toggle" type="button" data-toggle="collapse" data-target=".bs-navbar-collapse">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a href="/" class="navbar-brand">Dice with Friends</a>
+      </div>
+      <nav class="collapse navbar-collapse bs-navbar-collapse" role="navigation">
+      {% if player %}
+        <ul class="nav navbar-nav navbar-left">
+          <li><a href="/gamesinprogress">In progress</a></li>
+          <li><a href="/completedgames">Completed games</a></li>
+          <!-- <li><a href="/solostats">Solo stats</a></li> -->
+        </ul>
+        {% endif %}
+        <ul class="nav navbar-nav navbar-right">
+          {% if player %}
+            <li><a id="change-display-name-link">{{ player.get_name() }}</a></li>
+          {% endif %}
+          {% if logout_url %}
+            <li><a style="display: inline-block;" href="{{ logout_url }}">Sign out</a></li>
+          {% endif %}
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+{% if player %}
+  <!-- Change display_name Modal -->
+  <div id='change-display-name-modal' class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          {% if player.display_name %}
+            <h4 class="modal-title">Update your display name</h4>
+          {% else %}
+            <h4 class="modal-title">Set your display name</h4>
+          {% endif %}
+        </div>
+        <form action="/setdisplayname" method="POST">
+          <div class="modal-body">
+            <p>This will be the name displayed in the app and on game pages.</p>
+            <input type="text" name="display_name" class="form-control" placeholder="Usually just your first name" value="{% if player.display_name %}{{ player.display_name }}{% endif %}" autofocus>
+          </div>
+          <div class="modal-footer">
+	        {% if player.display_name %}
+	          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+	        {% endif %}
+            <button type="submit" class="btn btn-primary">OK</button>
+          </div>
+        </form>
+      </div>
+      <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+  </div>
+  <!-- /.modal -->
+  <script>
+  	$("#change-display-name-link").click(function() {
+  	  {% if player.display_name %}
+  	    $("input[name=display_name]").val("{{ player.display_name }}");
+      {% else %}
+        $("input[name=display_name]").val("");
+      {% endif %}
+      $('#change-display-name-modal').modal('show');
+  	});
+  	{% if show_set_name_modal %}
+  	  $(document).ready(function() {
+  		setTimeout(function() {
+  		  $('#change-display-name-modal').modal('show');
+  		}, 2000);
+  	  });
+  	{% endif %}
+  </script>
+{% endif %}

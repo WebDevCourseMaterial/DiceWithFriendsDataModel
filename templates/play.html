@@ -1,0 +1,138 @@
+{% include "templates/header.html" %}
+<script src="/static/js/dwf_play_main.js"></script>
+<script src="/static/js/Die.js"></script>
+<script src="/static/js/DiceRound.js"></script>
+<script src="/static/js/DiceRoundController.js"></script>
+<link rel="stylesheet" type="text/css" href="/static/stylesheets/play.css">
+<div class="container">
+  <div class="game-stats">
+    <div class="row">
+      <div class="col-xs-6">
+        <h2>
+          <span class="player-name">{{ player_display_name }}</span><br><span id="player-score"></span>
+        </h2>
+      </div>
+      <div class="col-xs-6">
+        <h2>
+          <span class="player-name">{{ opponent_display_name }}</span><br><span id="opponent-score"></span>
+        </h2>
+      </div>
+      <div class="col-xs-8 col-xs-offset-2">
+        <p id="round-delta-status"></p>
+      </div>
+    </div>
+  </div>
+</div>
+{% if not game.is_complete %}
+<div class="container game-table">
+  <div class="row">
+    <div class="col-xs-12 score-label">
+      Score = <span id="round-score">0</span>
+    </div>
+    <div class="col-xs-12 off-table dice-row">
+      <button id="btn-off-table-0" type="button" class="btn btn-lg invisible"></button>
+      <button id="btn-off-table-1" type="button" class="btn btn-lg invisible"></button>
+      <button id="btn-off-table-2" type="button" class="btn btn-lg invisible"></button>
+      <button id="btn-off-table-3" type="button" class="btn btn-lg invisible"></button>
+      <button id="btn-off-table-4" type="button" class="btn btn-lg invisible"></button>
+      <button id="btn-off-table-5" type="button" class="btn btn-lg invisible"></button>
+    </div>
+    <div class="col-xs-12 on-table dice-row">
+      <div class="dice-container">
+        <button id="btn-on-table-0" type="button" class="btn btn-lg"></button>
+        <button id="btn-on-table-1" type="button" class="btn btn-lg"></button>
+        <button id="btn-on-table-2" type="button" class="btn btn-lg"></button>
+        <button id="btn-on-table-3" type="button" class="btn btn-lg"></button>
+        <button id="btn-on-table-4" type="button" class="btn btn-lg"></button>
+        <button id="btn-on-table-5" type="button" class="btn btn-lg"></button>
+      </div>
+    </div>
+    <div class="col-xs-12">
+      <form action="/scoresupdate" method="POST">
+        <button id="btn-roll-again" type="button" class="btn btn-lg btn-danger">Roll Again</button>
+        <input type="hidden" name="game_key" class="hidden-input" value="{{ game.key.urlsafe() }}">
+        <input type="hidden" name="new_score" class="hidden-input">
+        <button id="btn-stop" type="submit" class="btn btn-lg btn-success">Stop</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% else %}
+<!-- TODO: Handle when over 10k, but game is not over. -->
+<h1 class="game-over text-center">This game is OVER!</h1>
+{% endif %}
+<script>
+var scoreNeededToWin = 10000;
+var playerScores = {{ player_scores }};
+var opponentScores = {{ opponent_scores }};
+var roundsAhead = playerScores.length - opponentScores.length;
+
+// Scores
+var playerScore = playerScores.reduce(function(a, b) { return a + b; }, 0);
+$("#player-score").html(playerScore);
+var opponentScore = opponentScores.reduce(function(a, b) { return a + b; }, 0);
+if (roundsAhead < 0) {
+  opponentScore = 0;
+  for (var i = 0; i < playerScores.length; ++i) {
+    opponentScore += opponentScores[i];
+  }
+}
+$("#opponent-score").html(opponentScore);
+if (playerScore > opponentScore) {
+  $("#player-score").addClass("winning-score-color");
+  $("#opponent-score").addClass("losing-score-color");
+} else if (playerScore < opponentScore){
+  $("#player-score").addClass("losing-score-color");
+  $("#opponent-score").addClass("winning-score-color");
+}
+
+// Status text
+var roundDeltaStatus;
+if (roundsAhead > 1) {
+  roundDeltaStatus = "You have played " +  roundsAhead +" more rounds than {{opponent_display_name}}"
+} else if (roundsAhead == 1) {
+  roundDeltaStatus = "You have played one more round than {{opponent_display_name}}"
+} else if (roundsAhead == 0) {
+  roundDeltaStatus = "You have both played the same number of rounds";
+} else {
+  roundDeltaStatus = "{{opponent_display_name}} has played more rounds (future scores hidden)."
+}
+$("#round-delta-status").html(roundDeltaStatus);
+
+// Check for >=10k
+if (playerScore >= scoreNeededToWin) {
+  $(".game-table").html("<h1>You have finished this game.  You need to wait for your opponent to finish.</h1>");
+}
+
+// Set game over message or start the DiceRoundController.
+{% if game.is_complete %}
+  var officialPlayerScore = 0;
+  var officialOpponentScore = 0;
+  var i = 0;
+  while (officialPlayerScore < scoreNeededToWin && officialOpponentScore < scoreNeededToWin) {
+    officialPlayerScore += playerScores[i];
+    officialOpponentScore += opponentScores[i];
+    i++;
+  }
+  $("#player-score").html(officialPlayerScore);
+  $("#opponent-score").html(officialOpponentScore);
+  if (officialPlayerScore > officialOpponentScore) {
+    $("#player-score").addClass("winning-score-color");
+    $("#opponent-score").addClass("losing-score-color");
+    $(".game-over").html("This game is over!<br>The winner was... {{ player_display_name }}!");
+  } else if (officialPlayerScore < officialOpponentScore){
+    $("#player-score").addClass("losing-score-color");
+    $("#opponent-score").addClass("winning-score-color");
+    $(".game-over").html("This game is over!<br>The winner was... {{ opponent_display_name }}!");
+  } else {
+    $(".game-over").html("Tie game!");
+  }
+  $("#round-delta-status").html("");
+{% else %}
+	new rh.dwf.DiceRoundController();
+{% endif %}
+
+
+
+</script>
+{% include "templates/footer.html" %}

@@ -1,0 +1,132 @@
+{% include "templates/header.html" %}
+
+<script src="http://cdn.datatables.net/1.10.0/js/jquery.dataTables.js"></script>
+<script src="http://cdn.datatables.net/plug-ins/be7019ee387/integration/bootstrap/3/dataTables.bootstrap.js"></script>
+<link rel="stylesheet" type="text/css" href="http://cdn.datatables.net/plug-ins/be7019ee387/integration/bootstrap/3/dataTables.bootstrap.css">
+
+<link rel="stylesheet" type="text/css" href="/static/stylesheets/games.css">
+<script src="/static/js/dwf_games.js"></script>
+
+<div class="container main">
+  {% if games_less_than_10k %}
+    <h1>Score < 10K: Games I can play</h1>
+    <div class="table-wrapper table-responsive">
+      <table id="games-less-than-10k-table" class="table table-striped table-hover table-condensed table-responsive"></table>
+      <script>
+        var gamesLessThan10kColumns = [
+           {
+        	"title": "Opponent",
+        	"class": "opponent",
+            "render": function(data, type, full, meta) {
+              if (type == "display") {
+                return data.opponent + " | <a href='/play?game_key=" + data.game_key + "'>Play</a>";
+              }
+              return data.opponent;
+            }
+          },
+          { "title": "Date",
+              "class": "date",
+              "orderSequence": ["desc", "asc"],
+              "searchable": false,
+              "render": function(data, type, full, meta) {
+                if (type == "sort") {
+                  return data.date_sort;
+                }
+                return data.date_display;
+              }
+            },
+          { "title": "My Round", "class": "round"},
+          { "title": "Game Round", "class": "round"},
+          { "title": "Opponent Finished?", "class": "center"}
+        ];
+        var gamesLessThan10kData = [
+          {% for game in games_less_than_10k %}
+            [
+             { "opponent": "{{ game.opponent_name }}",
+               "game_key": "{{ game.key.urlsafe() }}"
+             },
+             {
+               "date_sort": "{{ game.last_touch_date_time }}",
+               "date_display": "{{ game.last_touch_date_time|date_format }}"
+             },
+             "{{ game.current_player_round }}",
+             "{{ game.official_round }}",
+             "{{ game.is_opponent_finished|game_complete_boolean_format }}",
+            ]
+            {% if not loop.last %},{% endif %}
+          {% endfor %}
+        ];
+        $("#games-less-than-10k-table").DataTable({
+          "columns": gamesLessThan10kColumns,
+          "data": gamesLessThan10kData
+        }).order([3, "asc"]).order([1, "desc"]).order([4, "desc"]).draw();
+      </script>
+    </div>
+  {% else %}
+    <div class="jumbotron center">
+      <p>You have no incomplete games.  Maybe you'd like to start a new game.</p>
+      <p><button id="new-game-btn" class="btn btn-lg btn-success" type="button" >New Game</button></p>
+    </div>
+  {% endif %}
+
+
+  {% if games_10k_or_more %}
+    <h1>Score > 10K: Waiting only for opponent to finish</h1>
+    <div class="table-wrapper">
+      <table id="games-10k-or-more-table" class="table table-striped table-hover table-condensed table-responsive"></table>
+      <script>
+        var games10kOrMoreColumns = [
+           {
+          "title": "Opponent",
+          "class": "opponent",
+            "render": function(data, type, full, meta) {
+              if (type == "display") {
+                return data.opponent + " | <a href='/play?game_key=" + data.game_key + "'>View</a>";
+              }
+              return data.opponent;
+            }
+          },
+          { "title": "Date",
+              "class": "date",
+              "orderSequence": ["desc", "asc"],
+              "searchable": false,
+              "render": function(data, type, full, meta) {
+                if (type == "sort") {
+                  return data.date_sort;
+                }
+                return data.date_display;
+              }
+            },
+          { "title": "My Finish Round", "class": "round"},
+          { "title": "Game Round", "class": "round"},
+          { "title": "Opponent Score", "class": "center"}
+        ];
+        var games10kOrMoreData = [
+          {% for game in games_10k_or_more %}
+            [
+             { "opponent": "{{ game.opponent_name }}",
+               "game_key": "{{ game.key.urlsafe() }}"
+             },
+             {
+               "date_sort": "{{ game.last_touch_date_time }}",
+               "date_display": "{{ game.last_touch_date_time|date_format }}"
+             },
+             "{{ game.current_player_round }}",
+             "{{ game.official_round }}",
+             "{{ game.opponent_actual_score }}",
+            ]
+            {% if not loop.last %},{% endif %}
+          {% endfor %}
+        ];
+        $("#games-10k-or-more-table").DataTable({
+          "columns": games10kOrMoreColumns,
+          "data": games10kOrMoreData
+        }).order([3, "asc"]).order([1, "desc"]).order([4, "desc"]).draw();
+      </script>
+    </div>
+  {% endif %}
+
+</div>
+
+{% include "templates/new_game_modal.html" %}
+{% include "templates/footer.html" %}

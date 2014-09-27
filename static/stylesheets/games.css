@@ -1,0 +1,20 @@
+.main {
+  margin-top: 50px;
+}
+
+.table-wrapper {
+  padding: 10px 30px 5px;
+  border: 2px solid #ccc;
+  border-radius: 5px;
+  box-shadow: #ddd 2px 2px 0px;
+}
+
+input[type="search"] {
+	margin-left: 5px;
+}
+
+.date,
+.round,
+.center {
+	text-align: center;
+}

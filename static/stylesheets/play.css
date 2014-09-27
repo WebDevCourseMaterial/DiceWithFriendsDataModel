@@ -1,0 +1,116 @@
+body {
+	padding-top: 40px;
+}
+
+.game-stats {
+	background: rgb(82, 88, 124);
+  color: white;
+  border-radius: 10px;
+	margin-top: 20px;
+	text-align: center;
+}
+
+.player-name {
+	color: lightgray;
+}
+
+.game-table {
+	text-align: center;
+}
+
+#player-score,
+#opponent-score {
+	font-size: 0.9em;
+}
+
+.winning-score-color {
+	color: #EBFAEC;
+}
+
+.losing-score-color {
+	color: #FCDFE4;
+}
+
+.dice-row {
+	margin: 0 0 20px 0;
+}
+
+.score-label {
+	font-size: 1.5em;
+	margin: 5px;
+}
+
+@media (min-width: 400px) {
+	.dice-container {
+		position: relative;
+		display: inline-block;
+		background-color: #68DD6C;
+		padding: 20px;
+		border: 2px solid rgba(170, 81, 46, 0.42);
+		border-radius: 10px;
+		box-shadow: 5px 5px 2px #888888;
+	}
+}
+
+.dice-row button {
+	height: 44px;
+	width: 44px;
+	background-image: url('/static/images/dice_sprite.png');
+}
+
+.die-1 {
+  background-position:-4px -4px;
+}
+
+.die-2 {
+  background-position:-52px -4px;
+}
+
+.die-3 {
+  background-position:-100px -4px;
+}
+
+.die-4 {
+  background-position:-148px -4px;
+}
+
+.die-5 {
+  background-position:-196px -4px;
+}
+
+.die-6 {
+  background-position:-244px -4px;
+}
+
+.die-none {
+  background-position:-292px -4px;
+}
+
+.die-1-disabled {
+  background-position:-4px -52px;
+}
+
+.die-2-disabled {
+  background-position:-52px -52px;
+}
+
+.die-3-disabled {
+  background-position:-100px -52px;
+}
+
+.die-4-disabled {
+  background-position:-148px -52px;
+}
+
+.die-5-disabled {
+  background-position:-196px -52px;
+}
+
+.die-6-disabled {
+  background-position:-244px -52px;
+}
+
+button {
+  cursor: pointer;
+  font-size: 1.5em;
+}

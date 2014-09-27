@@ -1,0 +1,19 @@
+{% include "templates/header.html" %}
+<link rel="stylesheet" type="text/css" href="/static/stylesheets/home.css">
+<script src="/static/js/dwf_home.js"></script>
+<div class="container">
+  <div class="jumbotron">
+    <h1>Dice with Friends</h1>
+    <img width="256px" height="256px" src="/static/images/dwf_logo.png" alt="logo" />
+    <p class="lead">Play a dice game against a friend using this site or an iOS / Android device.  Play one turn or play all your turns!<br><a href="http://en.wikipedia.org/wiki/Farkle">Basic Game Rules</a></p>
+
+    {% if player %}
+      <p><button id="new-game-btn" class="btn btn-lg btn-success" type="button" >New Game</button></p>
+    {% else %}
+      <p><a id="sign-in-btn" href="{{ login_url }}" class="btn btn-lg btn-success">Sign in with Google</a></p>
+    {% endif %}
+  </div>
+</div>
+
+{% include "templates/new_game_modal.html" %}
+{% include "templates/footer.html" %}
