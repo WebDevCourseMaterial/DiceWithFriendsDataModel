@@ -55,9 +55,9 @@ class ScoresUpdateAction(base_handlers.BaseAction):
     game = ndb.Key(urlsafe=self.request.get('game_key')).get()
     new_score = int(self.request.get("new_score"))
     if player.key == game.creator_key:
-      game.creator_scores.append(new_score)
+      # TODO: Append the score to the creator scores
     else:
-      game.invitee_scores.append(new_score)
+      # TODO: Append the score to the invitee scores
     game.is_complete = game_utils.is_game_complete(game)
     game.put()
     self.redirect(self.request.referer)
