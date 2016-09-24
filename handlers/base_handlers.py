@@ -13,7 +13,7 @@ class BasePage(webapp2.RequestHandler):
     user = users.get_current_user()
     if not user:
       template = main.jinja_env.get_template("templates/home.html")
-      self.response.out.write(template.render({'login_url': users.create_login_url(self.request.referer)}))
+      self.response.out.write(template.render({'login_url': users.create_login_url("/")}))
     else:
       player = player_utils.get_player_from_email(user.email())
       show_set_name_modal = not player.display_name or not len(player.display_name) > 0
